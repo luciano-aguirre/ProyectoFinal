@@ -80,4 +80,4 @@ function deleteAll() {
     });
 }
 exports.deleteAll = deleteAll;
-//# sourceMappingURL=posicionesGPSRepository.js.map
+//# sourceMappingURL=posicionGPSRepository.js.map

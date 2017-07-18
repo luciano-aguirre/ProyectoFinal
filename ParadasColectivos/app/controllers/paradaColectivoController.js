@@ -1,71 +1,48 @@
 "use strict";
-//import IPosicionGPS = posicionGPSModel.IPosicionGPS;
-//import repositorioPosicionesGPS = posicionGPSModel.repository;
-//import IParadaColectivo = paradaColectivoModel.IParadaColectivo;
-//import repositorioParadas = paradaColectivoModel.repository;
-/*
-function crearParadaColectivo(linea: Number, latitud: Number, longitud: Number, sentido: String): IParadaColectivo {
-
-    repositorioPosicionesGPS.create({lati}
-
-    let nuevaParada: IParadaColectivo = null;
-    repositorioParadas.create({ linea: linea, posicionGPS: posicionGPS, sentido: sentido }, (error, paradaColectivo) => {
-        if (!error) {
-            nuevaParada = paradaColectivo;
-        }
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments)).next());
     });
-    return nuevaParada;
-}
-
-export function obtenerParadasColectivo(req: express.Request, res: express.Response) {
-    let idParada: number = req.params.id;
-
-    repositorioParadas.findOne({ _id: idParada }, (error, paradaColectivo) => {
-        if (error) {
-            res.send(400);
-        } else {
-            paradaColectivo.populate('posicion', function (error, posicionGPS: IPosicionGPS) {
-                if (error) {
-                    res.send(400);
-                }
-                else {
-                    res.send('Parada ID ' + paradaColectivo.id + ' (' + posicionGPS.latitud + ',' + posicionGPS.longitud + ') Sentido ' + paradaColectivo.sentido);
-                }
-            });
+};
+const paradaColectivoService = require('../services/paradaColectivoService');
+function obtenerParadasColectivo(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let paradas = yield paradaColectivoService.obtenerParadasColectivo();
+        if (paradas != null) {
+            res.status(200).json(paradas);
+        }
+        else {
+            res.status(400).send('Error al obtener las paradas en el controlador');
         }
     });
 }
-
-export function cargarParadasColectivo(req: express.Request, res: express.Response) {
-    let linea: number = req.params.linea;
-
-    request(
-        {
-            method: 'GET',
-            uri: 'http://api.datos.bahiablanca.gob.ar/api/v2/datastreams/PARAD-DE-COLEC/data.json/?auth_key=a049a7553f75ed50c8fab78b1685e7ac83c8d0a4&filter0=column0[==]' + linea
+exports.obtenerParadasColectivo = obtenerParadasColectivo;
+function cargarParadasColectivo(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let linea = req.params.linea;
+        try {
+            yield paradaColectivoService.cargarParadasColectivo(linea);
+            res.status(200).send('Se cargaron las paradas de la linea ' + linea);
         }
-        , function (error, response, body) {
-
-            try {
-                const dataJSON = JSON.parse(body);
-                let paradas = dataJSON['result']['fArray'];//VER COMO TIPAR EL ARRAY
-                let numeroParadas: number = 0;
-                let posLatitud: number = 6;
-                let posLongitud: number = 7;
-                let posSentido: number = 8;
-                while (posLatitud < paradas.length && posLongitud < paradas.length) {
-                    //console.log(`Parada ${++numeroParadas}: (${paradas[posLatitud]['fStr']}, ${paradas[posLongitud]['fStr']})`);
-                    crearParadaColectivo(linea, paradas[posLatitud]['fStr'], paradas[posLongitud]['fStr'], paradas[posSentido]['fStr']);
-                    ++numeroParadas;
-                    posLatitud += 4;
-                    posLongitud += 4;
-                    posSentido += 4;
-                }
-                res.send(`Total paradas linea ${linea} : ${numeroParadas}`);
-            } catch (e) {
-                res.send('Error al parsear el JSON');
-            }
-        });
+        catch (error) {
+            res.status(400).send('Error al cargar las paradas de la linea ' + linea);
+        }
+    });
 }
-*/ 
+exports.cargarParadasColectivo = cargarParadasColectivo;
+function eliminarParadasColectivo(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let resultado = yield paradaColectivoService.eliminarParadasColectivos();
+        if (resultado) {
+            res.status(200).send('Se eliminaron las paradas de la BD');
+        }
+        else {
+            res.status(400).send('No se eliminaron las paradas de la BD');
+        }
+    });
+}
+exports.eliminarParadasColectivo = eliminarParadasColectivo;
 //# sourceMappingURL=paradaColectivoController.js.map

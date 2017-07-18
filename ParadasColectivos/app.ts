@@ -1,13 +1,14 @@
 ﻿import express = require('express');
 import routes = require('./app/routes/indexRoutes');
 import posicionesGPS = require('./app/routes/posicionGPSRoutes');
+import paradasColectivos = require('./app/routes/paradaColectivoRoutes');
 import http = require('http');
 import path = require('path');
 import mongoose = require('mongoose');
 import bodyParser = require('body-parser');
 import request = require('request');
 
-mongoose.connect('localhost', 'posicionesGPS');
+mongoose.connect('localhost', 'paradasColectivo');
 
 var app = express();
 
@@ -49,6 +50,10 @@ app.get('/', routes.index);
 app.del('/posicionesGPS', posicionesGPS.eliminarPosicionesGPS);
 app.get('/posicionesGPS', posicionesGPS.obtenerPosicionesGPS);
 app.post('/posicionesGPS/:linea', posicionesGPS.cargarPosicionesGPS);
+
+app.del('/paradasColectivos', paradasColectivos.eliminarParadasColectivo);
+app.get('/paradasColectivos', paradasColectivos.obtenerParadasColectivoS);
+app.post('/paradasColectivos/:linea', paradasColectivos.cargarParadasColectivo);
 
 http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));

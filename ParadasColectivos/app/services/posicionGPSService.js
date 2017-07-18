@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const request = require('request');
-const posicionesGPSRepository = require('../repositories/posicionesGPSRepository');
+const posicionGPSRepository = require('../repositories/posicionGPSRepository');
 /*
 export function cargarPosiciones(linea: number, next) {
 
@@ -61,7 +61,7 @@ function cargarPosiciones(linea) {
                     let posLongitud = 7;
                     let posicionCreada;
                     while (posLatitud < paradas.length && posLongitud < paradas.length) {
-                        posicionCreada = yield posicionesGPSRepository.create(paradas[posLatitud]['fStr'], paradas[posLongitud]['fStr']);
+                        posicionCreada = yield posicionGPSRepository.create(paradas[posLatitud]['fStr'], paradas[posLongitud]['fStr']);
                         ++numeroParadas;
                         if (posicionCreada != null) {
                             console.log('Parada ' + numeroParadas + ' creada');
@@ -91,11 +91,24 @@ export function obtenerPosicionesGPS(next) {
         }
     });
 }*/ //funcion con callback
+function crearPosicionGPS(latitud, longitud) {
+    return __awaiter(this, void 0, Promise, function* () {
+        let nuevaPosicionGPS = yield posicionGPSRepository.create(latitud, longitud);
+        if (nuevaPosicionGPS != null) {
+            console.log('Se creo correctamente una posicion');
+        }
+        else {
+            console.log('Error al crear una posicion');
+        }
+        return nuevaPosicionGPS;
+    });
+}
+exports.crearPosicionGPS = crearPosicionGPS;
 function obtenerPosicionesGPS() {
     return __awaiter(this, void 0, Promise, function* () {
         //try {
         //NUNCA VA A HABER UN ERROR
-        let posicionesGPS = yield posicionesGPSRepository.getAll();
+        let posicionesGPS = yield posicionGPSRepository.getAll();
         if (posicionesGPS != null) {
             console.log('Se obtuvieron las posiciones desde el servicio');
         }
@@ -124,7 +137,7 @@ export function eliminarPosicionesGPS(next) {
 function eliminarPosicionesGPS() {
     return __awaiter(this, void 0, Promise, function* () {
         //try {NUNCA VA A HABER UN ERROR
-        return yield posicionesGPSRepository.deleteAll();
+        return yield posicionGPSRepository.deleteAll();
         //} catch (error) {
         //   return false;
         //}

@@ -1,7 +1,7 @@
 ﻿import express = require('express');
 import bodyParser = require('body-parser');
 import request = require('request');
-import posicionesGPSRepository = require('../repositories/posicionesGPSRepository');
+import posicionGPSRepository = require('../repositories/posicionGPSRepository');
 import posicionGPSModel = require('../models/posicionGPSModel');
 
 import IPosicionGPS = posicionGPSModel.IPosicionGPS;
@@ -60,7 +60,7 @@ export async function cargarPosiciones(linea: number) {
                 let posicionCreada: IPosicionGPS;
                     
                 while (posLatitud < paradas.length && posLongitud < paradas.length) {
-                    posicionCreada = await posicionesGPSRepository.create(paradas[posLatitud]['fStr'], paradas[posLongitud]['fStr']);
+                    posicionCreada = await posicionGPSRepository.create(paradas[posLatitud]['fStr'], paradas[posLongitud]['fStr']);
                     ++numeroParadas;
                     if (posicionCreada != null) {
                         console.log('Parada ' + numeroParadas + ' creada');
@@ -87,10 +87,23 @@ export function obtenerPosicionesGPS(next) {
         }
     });
 }*///funcion con callback
+
+export async function crearPosicionGPS(latitud: number, longitud: number): Promise<IPosicionGPS> {
+
+    let nuevaPosicionGPS: IPosicionGPS = await posicionGPSRepository.create(latitud, longitud);
+    if (nuevaPosicionGPS != null) {
+        console.log('Se creo correctamente una posicion');
+    }
+    else {
+        console.log('Error al crear una posicion');
+    }
+    return nuevaPosicionGPS;
+}
+
 export async function obtenerPosicionesGPS(): Promise<IPosicionGPS[]> {
     //try {
         //NUNCA VA A HABER UN ERROR
-        let posicionesGPS: IPosicionGPS[] = await posicionesGPSRepository.getAll();
+        let posicionesGPS: IPosicionGPS[] = await posicionGPSRepository.getAll();
         if (posicionesGPS != null) {
             console.log('Se obtuvieron las posiciones desde el servicio');
         } else {
@@ -115,7 +128,7 @@ export function eliminarPosicionesGPS(next) {
 }*///funcion con callback
 export async function eliminarPosicionesGPS(): Promise<Boolean> {
     //try {NUNCA VA A HABER UN ERROR
-        return await posicionesGPSRepository.deleteAll();
+        return await posicionGPSRepository.deleteAll();
     //} catch (error) {
      //   return false;
     //}
